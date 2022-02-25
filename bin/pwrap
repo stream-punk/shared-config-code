@@ -1,0 +1,89 @@
+#!/opt/homebrew/bin/python3
+
+import sys
+from collections import defaultdict
+from textwrap import wrap
+
+
+def histogram(text):
+    indent = defaultdict(lambda: 0)
+    char = defaultdict(lambda: 0)
+    for line in text:
+        l = len(line) - len(line.lstrip())
+        indent[l] += 1
+        if l:
+            char[line[0]] += 1
+    return indent, char
+
+
+def indent_heuristic(text):
+    indent, char = histogram(text)
+    sort = sorted(indent.items(), key=lambda x: x[1], reverse=True)
+    c = [x[1] for x in sort]
+    c = c.count(sort[0][1])
+    if c > 1:
+        sort = sort[:c]
+        sort = sorted(sort, key=lambda x: x[0], reverse=True)
+    indent = sort[0][0]
+    char = sorted(char.items(), key=lambda x: x[1], reverse=True)
+    if indent:
+        return indent, char[0][0]
+    else:
+        return indent, ""
+
+
+def index_same(text, n):
+    try:
+        a = text[0][n]
+        for line in text[1:]:
+            if a != line[n]:
+                return False
+    except IndexError:
+        return False
+    return True
+
+
+def prefix_heuristic(text):
+    n = 0
+    while index_same(text, n):
+        n += 1
+    return text[0][:n], [line[n:] for line in text]
+
+
+def clean(text):
+    stext = []
+    rtext = []
+    rappend = rtext.append
+    sappend = stext.append
+    for line in text:
+        sline = line.strip()
+        if sline:
+            rappend(line)
+            sappend(sline)
+    return rtext, stext
+
+
+def pwrap(text, width):
+    text, stext = clean(text)
+    if len(stext) > 1:
+        prefix, stext = prefix_heuristic(stext)
+    else:
+        prefix = ""
+    indent, char = indent_heuristic(text)
+    text = wrap(" ".join(stext), int(width) - indent)
+    indent = char * indent
+    for line in text:
+        print(f"{indent}{prefix}{line}")
+
+
+def main():
+    width = sys.argv[1]
+    if len(sys.argv) > 2:
+        with open(sys.argv[2], "r") as f:
+            pwrap(f.readlines(), width)
+    else:
+        pwrap(sys.stdin.readlines(), width)
+
+
+if __name__ == "__main__":
+    main()

@@ -1,0 +1,3 @@
+#!/opt/homebrew/bin/dash
+
+exec reattach-to-user-namespace pbpaste "$@"
