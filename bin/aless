@@ -1,0 +1,5 @@
+#!/opt/homebrew/bin/bash
+
+pkill -PIPE af72fa7a6b15cf0
+unbuffer "$@" | exec -a af72fa7a6b15cf0 less -r
+stty echo

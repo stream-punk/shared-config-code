@@ -1,0 +1,3 @@
+#!/opt/homebrew/bin/dash
+
+unbuffer "$@" | less -r
