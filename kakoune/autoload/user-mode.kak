@@ -1,0 +1,7 @@
+map -docstring "grep word under cursor" global user g '<A-i>w:grep %val{selection}<ret>'
+map -docstring "grep symbol under cursor" global user f '<A-i>w:grep "\b%val{selection}\b"<ret>'
+map -docstring "wrap text" global user w '|par w$kak_opt_autowrap_column<ret>'
+map -docstring "select python indent block" global user b '<A-i>i<A-;>K{bGh'
+map -docstring "toggle line numbers" global user l ':toggle-line-numbers<ret>'
+map -docstring "toggle soft wrap" global user r ':toggle-soft-wrap<ret>'
+map -docstring "replace bad spelling" global user r '<A-i>w:spell-suggest<ret>'

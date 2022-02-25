@@ -1,0 +1,40 @@
+colorscheme alacritty
+
+require-module gpg
+require-module grep
+require-module find-apply
+require-module clipboard
+require-module language-server-settings
+require-module keep-nav-left
+require-module modeline
+
+require-module spell-patch
+require-module spell-completion
+define-command -docstring "load de_CH_frami spelling" spell-comp-de-ch-frami %{ spell-comp-open-file de_CH_frami }
+define-command -docstring "load en_GB spelling" spell-comp-en-gb %{ spell-comp-open-file en_GB }
+
+require-module color-mark
+map global normal <A-,> ':mark-cursor<ret>' -docstring 'mark word under cursor'
+map global normal <A-.> ':mark-pop<ret>' -docstring 'clear a mark from ring'
+
+require-module search-highlight
+hook global WinCreate .* %{
+      search-highlight-on
+}
+
+require-module cmd-history
+hook global KakEnd .* history-save
+hook global KakBegin .* history-load
+
+require-module custom-finders
+alias global ge git-edit
+alias global fe file-edit
+alias global de darcs-edit
+
+require-module kak-tree-mode
+
+hook global BufCreate ^[^*]+$ editorconfig-load
+hook global ModeChange pop:insert:normal %{ execute-keys <C-s> }
+hook global BufCreate .* modeline-parse
+hook global WinSetOption filetype=(git-commit|restructuredtext|plain|markdown) autowrap-enable
+hook global BufCreate '\*scratch\*' %{ exec '%d' }
