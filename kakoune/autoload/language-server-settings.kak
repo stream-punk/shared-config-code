@@ -19,6 +19,5 @@ provide-module language-server-settings %{
     map -docstring "enter lsp mode" global normal ) ':enter-user-mode lsp<ret>'
     hook global WinSetOption filetype=(c|cpp|php|sh|javascript) %{
         my-lsp-init
-        lsp-auto-hover-enable
     }
 }

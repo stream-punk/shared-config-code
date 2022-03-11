@@ -2,9 +2,30 @@ provide-module language-server %{
     eval %sh{ kak-lsp --kakoune -s $kak_session }
     set-option global lsp_show_hover_format 'printf ''%s\n\n%s'' "${lsp_diagnostics}" "${lsp_info}" | tee $CLESS_FILE | markwarp'
 
+    define-command -hidden lsp-toggle-inlay-on %{
+        trigger-user-hook enable-inlay
+        map window normal <esc> ':lsp-toggle-inlay-off<ret>'
+    }
+    define-command -hidden lsp-toggle-inlay-off %{
+        trigger-user-hook disable-inlay
+        map window normal <esc> ':lsp-toggle-inlay-on<ret>'
+    }
+
     define-command -hidden my-lsp-init -docstring "Initialize lsp functionality" %{
         lsp-enable-window
+        lsp-auto-signature-help-enable
+        lsp-auto-hover-enable
         map window insert <C-p> '<esc>:lsp-snippets-select-next-placeholders<ret>c'
+        lsp-toggle-inlay-off
+        hook -group my-inlay-diag window User enable-inlay %{
+            add-highlighter "window/lsp_diagnostics" replace-ranges lsp_diagnostics
+        }
+        hook -group my-inlay-diag window User disable-inlay %{
+            remove-highlighter "window/lsp_diagnostics"
+        }
+        hook -once -always window WinSetOption filetype=.* %{
+            remove-hooks window rust-inlay-hints
+        }
     }
 
     define-command -docstring "debug kak-lsp" lsp-debug %{

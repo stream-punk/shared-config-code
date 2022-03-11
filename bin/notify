@@ -1,0 +1,6 @@
+#!/opt/homebrew/bin/dash
+
+exec reattach-to-user-namespace /opt/homebrew/bin/dash -c '
+terminal-notifier -remove 4352
+exec terminal-notifier "$@" -group 4352
+' "" "$@" > /dev/null 2> /dev/null
